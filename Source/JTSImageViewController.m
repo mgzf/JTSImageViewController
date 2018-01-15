@@ -512,7 +512,7 @@ typedef struct {
         font = [self.optionsDelegate fontForAltTextInImageViewer:self];
     }
     if (font == nil) {
-        font = [UIFont systemFontOfSize:21];
+        font = [UIFont systemFontOfSize:[self largeFontSize]];
     }
     self.textView.font = font;
     
@@ -533,6 +533,21 @@ typedef struct {
     [self.view addSubview:self.textView];
     
     [self setupTextViewTapGestureRecognizer];
+}
+
+- (CGFloat)largeFontSize {
+    CGFloat minFontScale = 0.93;
+    CGFloat maxFontScale = 1.02;
+    CGFloat padmaxFontScale = 1.2;
+    CGFloat largeFontOriginSize = 21.0f;
+    
+    CGFloat kScreenWidth = [[UIScreen mainScreen] bounds].size.width;
+    CGFloat scaleMin = (kScreenWidth == 320 ? minFontScale : (kScreenWidth == 414 ? maxFontScale : 1));
+    
+    CGFloat fontSizeScaleMin = (kScreenWidth > 550 ? padmaxFontScale : scaleMin);
+    CGFloat largeFontSize = largeFontOriginSize * fontSizeScaleMin;
+    
+    return largeFontSize;
 }
 
 - (void)setupImageModeGestureRecognizers {
@@ -990,7 +1005,7 @@ typedef struct {
     if ([self.optionsDelegate respondsToSelector:@selector(backgroundColorImageViewInImageViewer:)]) {
         backgroundColor = [self.optionsDelegate backgroundColorImageViewInImageViewer:self];
     } else {
-        backgroundColor = [UIColor clearColor];
+        backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:1];
     }
     
     return backgroundColor;
